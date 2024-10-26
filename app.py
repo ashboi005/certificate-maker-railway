@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, send_file
 import io
 from fpdf import FPDF
+import os
 
 app = Flask(__name__)
 
@@ -52,4 +53,5 @@ def generate():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=int(os.getenv("PORT", 5000)))
+
