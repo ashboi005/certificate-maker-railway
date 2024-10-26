@@ -29,7 +29,7 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    name = request.form.get('name').lower()
+    name = request.form.get('name').strip().lower()
 
     if name in team_names:
         pdf = FPDF('L', 'mm', 'A4')  # Landscape orientation, A4 size
