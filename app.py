@@ -18,7 +18,6 @@ team_names = [
     "pinkberry", "innoventures", "team 404", "code fusion"
 ]
 
-
 certificate_template_path = 'static/certificate.png'
 
 
@@ -29,9 +28,11 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    name = request.form.get('name').strip().lower()
+    name = request.form.get('name').strip()  # Original name with original capitalization
+    name_lower = name.lower()  # Lowercase version for comparison
 
-    if name in team_names:
+    # Check if the lowercase version is in the hardcoded list
+    if name_lower in team_names:
         pdf = FPDF('L', 'mm', 'A4')  # Landscape orientation, A4 size
         pdf.add_page()
 
@@ -39,9 +40,9 @@ def generate():
 
         # Customize text on top of the template
         pdf.set_font("Arial", 'B', 24)
-        pdf.set_text_color(255, 255, 255)  # Set text color to black
+        pdf.set_text_color(255, 255, 255)  # Set text color to white
         pdf.set_xy(27, 120)  # Set position (adjust based on your template)
-        pdf.cell(297, 10, txt=f"{name.title()}", ln=True, align='C')
+        pdf.cell(297, 10, txt=name, ln=True, align='C')  # Use the original `name`
 
         pdf_output = io.BytesIO()
         pdf_output.write(pdf.output(dest='S').encode('latin1'))
@@ -49,9 +50,8 @@ def generate():
 
         return send_file(pdf_output, download_name="certificate.pdf", as_attachment=True)
     else:
-        return "Sorry, your team name is not on the list, if you think is a mistake, kindly contact any Tech Team member", 403
+        return "Sorry, your team name is not on the list. If you think this is a mistake, kindly contact any Tech Team member.", 403
 
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.getenv("PORT", 5000)))
-
